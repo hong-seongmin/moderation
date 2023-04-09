@@ -11,10 +11,22 @@ function getQRCodeUrl(contentId) {
   return contentData[contentId].qrCodeUrl;
 }
 
+const contentDataLength = Object.keys(contentData).length;
+
+function getPreviousContentId(contentId) {
+  return contentId > 0 ? contentId - 1 : null;
+}
+
+function getNextContentId(contentId) {
+  return contentId < contentDataLength - 1 ? contentId + 1 : null;
+}
+
 export default function ContentScreen({ route, navigation }) {
   const { contentId } = route.params;
   const content = getContent(contentId);
   const qrCodeUrl = getQRCodeUrl(contentId);
+  const previousContentId = getPreviousContentId(contentId);
+  const nextContentId = getNextContentId(contentId);
 
   return (
     <View style={styles.container}>
@@ -25,16 +37,24 @@ export default function ContentScreen({ route, navigation }) {
         </TouchableOpacity>
       </ScrollView>
       <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.goBack()}>
-          <Text style={styles.buttonText}>뒤로가기</Text>
-        </TouchableOpacity>
+        {previousContentId !== null && (
+          <TouchableOpacity
+            style={{ ...styles.button, marginRight: 10 }}
+            onPress={() => navigation.navigate('Content', { contentId: previousContentId })}>
+            <Text style={styles.buttonText}>이전</Text>
+          </TouchableOpacity>
+        )}
+        {nextContentId !== null && (
+          <TouchableOpacity
+            style={styles.button}
+            onPress={() => navigation.navigate('Content', { contentId: nextContentId })}>
+            <Text style={styles.buttonText}>다음</Text>
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   );
 }
-
 
 const styles = StyleSheet.create({
   container: {
@@ -54,13 +74,14 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   button: {
-    backgroundColor: '#007AFF',
+    backgroundColor: '#181677',
     paddingHorizontal: 20,
     paddingVertical: 10,
     borderRadius: 5,
   },
   buttonText: {
-    color: '#fff',
+    color: '#88E83C',
     fontSize: 16,
   },
 });
+

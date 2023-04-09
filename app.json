@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "moderation",
+    "name": "중용자잠",
     "slug": "snack-a33615b0-f0e7-4faf-959b-e09a1c5cce2c",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -24,10 +24,16 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "com.hongseongmin.moderation"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "8c664d75-f888-4d6f-86b0-929170cf4a9e"
+      }
     }
   }
 }

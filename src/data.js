@@ -42,7 +42,7 @@ export const contentData = {
     qrCodeUrl: 'https://philo.oursophy.com/2023/03/0-1.html',
   },
   '2': {
-    title: '1-天命之謂性',
+    title: '1-天命之謂性。',
     content: `
     하늘(天)의 명(命)을 성(性)이라 이른다.
     성(性)을 따름을 도(道)라 이른다.
