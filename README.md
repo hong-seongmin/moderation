@@ -1,11 +1,24 @@
-# Sample Snack app
+# 정약용의 '중용자잠' 소개
 
-Open the `App.js` file to start writing some code. You can preview the changes directly on your phone or tablet by scanning the **QR code** or use the iOS or Android emulators. When you're done, click **Save** and share the link!
+## 개요
 
-When you're ready to see everything that Expo provides (or if you want to use your own editor) you can **Download** your project and use it with [expo-cli](https://docs.expo.io/get-started/installation).
+'중용자잠'은 조선 후기 유교 학자 정약용에 의해 쓰여진 주석서입니다. 
+이 작품은 중국의 고전 '중용'에 대한 깊은 분석과 함께 각 절마다 주석의 일종인 잠을 추가로 제공합니다.
 
-All projects created in Snack are publicly available, so you can easily share the link to this project via link, or embed it on a web page with the `<>` button.
+## 구조
 
-If you're having problems, you can tweet to us [@expo](https://twitter.com/expo) or ask in our [forums](https://forums.expo.io/c/snack).
+중용자잠은 크게 세 부분으로 나눌 수 있습니다.:
+- **1권**: '중용'에 대한 학술적 접근 및 천명지위성절부터 자왈천하국가가균야절에 이르는 내용과 주석, 그리고 잠이 포함되어 있습니다.
+- **2권**: 자로문강절부터 자성명위지성절까지의 주요 내용 및 주석과 잠을 담고 있습니다. 중용자잠의 원문에는 중용의 본문이 생략됐지만 본 어플은 독자들의 편의를 위해 추가했습니다.
+- **3권**: 유천하지성절에서 마지막 절까지의 본문, 주석, 그리고 잠을 포함하고 있습니다.
 
-Snack is Open Source. You can find the code on the [GitHub repo](https://github.com/expo/snack).
+## 주요 내용
+
+- 정약용은 '성(性)'에 대한 독특한 해석을 제시합니다. 정약용은 성을 인간의 본래적인 성향이나 취향으로 보았습니다.
+- 그는 여러 선진 유학자들의 성에 대한 견해를 비판하며, 그의 견해는 맹자의 생각과 유사하다고 할 수 있습니다.
+- '중용자잠'은 정약용의 개인적인 해석과 그의 학문적 배경이 결합된 작품으로, 그의 독창적인 사상을 엿볼 수 있습니다.
+
+
+
+Google Play:
+https://play.google.com/store/apps/details?id=com.hongseongmin.moderation&hl=ko&gl=US
