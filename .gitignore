@@ -1,3 +1,5 @@
+#eas build --platform android로 빌드할 경우, 아래의 내용이 같이 제외됨
+
 node_modules/
 .expo/
 dist/
@@ -11,6 +13,9 @@ npm-debug.*
 web-build/
 playstore/
 assets/*.psd
+*.mp3
+*.aab
+tts.py
 
 # macOS
 .DS_Store
