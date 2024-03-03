@@ -13,7 +13,7 @@ npm-debug.*
 web-build/
 playstore/
 assets/*.psd
-*.mp3
+# *.mp3
 *.aab
 tts.py
 

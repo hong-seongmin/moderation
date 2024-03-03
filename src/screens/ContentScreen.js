@@ -14,21 +14,41 @@ import { Audio } from "expo-av";
 import { MaterialIcons, MaterialCommunityIcons } from "@expo/vector-icons";
 
 function getContent(contentId) {
-  return contentData[contentId].content;
+  const content = contentData[contentId];
+  if (!content) {
+    console.warn(`contentId ${contentId}에 해당하는 컨텐츠가 없습니다.`);
+    // 컨텐츠가 없는 경우 null을 반환하는 대신, 사용자가 알 수 있도록 메시지를 반환하거나 대체 컨텐츠를 제공
+    return null;
+  }
+  return content.content;
 }
 
 function getQRCodeUrl(contentId) {
-  return contentData[contentId].qrCodeUrl;
+  const content = contentData[contentId];
+  if (!content) {
+    console.warn(`contentId ${contentId}에 해당하는 QR 코드 URL이 없습니다.`);
+    // QR 코드 URL이 없는 경우 null을 반환하는 대신, 사용자가 알 수 있도록 메시지를 반환하거나 대체 URL을 제공
+    return null;
+  }
+  return content.qrCodeUrl;
 }
 
 const contentDataLength = Object.keys(contentData).length;
 
 function getPreviousContentId(contentId) {
-  return contentId > 0 ? contentId - 1 : null;
+  // 숫자로 변환하여 계산합니다.
+  const numericContentId = Number(contentId);
+  return numericContentId > 0 ? numericContentId - 1 : null;
 }
 
 function getNextContentId(contentId) {
-  return contentId < contentDataLength - 1 ? contentId + 1 : null;
+  // 숫자로 변환하여 계산합니다.
+  const numericContentId = Number(contentId);
+  if (numericContentId >= contentDataLength - 1) {
+    return null;
+  } else {
+    return numericContentId + 1;
+  }
 }
 
 export default function ContentScreen({ route, navigation }) {
@@ -39,6 +59,34 @@ export default function ContentScreen({ route, navigation }) {
   const nextContentId = getNextContentId(contentId);
   const [sound, setSound] = useState();
   const [isPlaying, setIsPlaying] = useState(false);
+  const [isNavigating, setIsNavigating] = useState(false);
+
+  // 다음/이전 콘텐츠로 이동하는 로직을 처리하는 함수
+  const handleNavigation = async (direction) => {
+    console.log(contentId);
+    if (isNavigating) return; // 이미 네비게이션 중이라면 추가 동작 방지
+    setIsNavigating(true); // 네비게이션 시작 플래그 설정
+
+    let newContentId = contentId; // 현재 contentId를 기준으로 계산
+
+    if (direction === "next" && nextContentId !== null) {
+      newContentId = nextContentId; // 다음 컨텐츠 ID로 설정
+    } else if (direction === "previous" && previousContentId !== null) {
+      newContentId = previousContentId; // 이전 컨텐츠 ID로 설정
+    }
+
+    try {
+      if (sound) {
+        await handleStop(); // 재생 중인 음성이 있으면 정지
+      }
+
+      navigation.navigate("Content", { contentId: newContentId }); // 수정된 부분: 숫자로 변환된 contentId를 사용하여 이동
+    } catch (error) {
+      console.error("이동 중 오류 발생:", error);
+    } finally {
+      setIsNavigating(false); // 네비게이션 종료 플래그 설정
+    }
+  };
 
   // 오디오 파일 미리 매핑
   const audioFiles = {
@@ -165,11 +213,17 @@ export default function ContentScreen({ route, navigation }) {
   };
 
   async function playSound(contentId) {
+    // 이전 sound 객체가 있다면 언로드합니다.
+    if (sound) {
+      await sound.unloadAsync();
+      setSound(null);
+    }
     const audioFile = audioFiles[contentId];
     if (audioFile) {
-      const { sound } = await Audio.Sound.createAsync(audioFile);
-      setSound(sound);
-      await sound.playAsync();
+      const { sound: newSound } = await Audio.Sound.createAsync(audioFile);
+      setSound(newSound);
+      await newSound.playAsync();
+      newSound.setOnPlaybackStatusUpdate(updatePlaybackStatus);
     } else {
       console.error("Audio file not found for contentId:", contentId);
     }
@@ -201,10 +255,17 @@ export default function ContentScreen({ route, navigation }) {
     };
   }, [sound]);
 
-  const updatePlaybackStatus = (status) => {
+  const updatePlaybackStatus = async (status) => {
     if (status.didJustFinish && !status.isLooping) {
       setIsPlaying(false);
-      sound.unloadAsync();
+      if (sound) {
+        await sound.unloadAsync(); // 안전하게 unloadAsync를 호출합니다.
+        setSound(null); // sound 상태를 초기화합니다.
+        // handleStop(); // 종료되면 정지버튼
+        // loadSound(contentId, false);
+      }
+      loadSound(contentId, false);
+      // handleStop();
     } else if (status.isPlaying) {
       setIsPlaying(true);
     } else {
@@ -220,6 +281,10 @@ export default function ContentScreen({ route, navigation }) {
       if (status.isPlaying) {
         await sound.pauseAsync();
       } else {
+        if (status.didJustFinish) {
+          // 재생이 완료된 상태에서는 재생 위치를 처음으로 설정하고 다시 재생
+          await loadSound(contentId, true);
+        }
         await sound.playAsync();
       }
     }
@@ -288,20 +353,18 @@ export default function ContentScreen({ route, navigation }) {
       <View style={styles.buttonContainer}>
         {previousContentId !== null && (
           <TouchableOpacity
+            disabled={isNavigating}
             style={{ ...styles.button, marginRight: 10 }}
-            onPress={() =>
-              navigation.navigate("Content", { contentId: previousContentId })
-            }
+            onPress={() => handleNavigation("previous")}
           >
             <Text style={styles.buttonText}>이전</Text>
           </TouchableOpacity>
         )}
         {nextContentId !== null && (
           <TouchableOpacity
+            disabled={isNavigating}
             style={styles.button}
-            onPress={() =>
-              navigation.navigate("Content", { contentId: nextContentId })
-            }
+            onPress={() => handleNavigation("next")}
           >
             <Text style={styles.buttonText}>다음</Text>
           </TouchableOpacity>
